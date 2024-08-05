@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-src/**/application-DataBase.properties/
+src/**/application-DataBase.properties
