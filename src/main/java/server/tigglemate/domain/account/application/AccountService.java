@@ -8,6 +8,7 @@ import server.tigglemate.domain.account.domian.entity.AccountType;
 import server.tigglemate.domain.account.domian.repository.AccountRepository;
 import server.tigglemate.domain.account.dto.AccountDTO;
 import server.tigglemate.domain.account.dto.CategoryCountDTO;
+import server.tigglemate.domain.account.dto.DailyExpensesDTO;
 import server.tigglemate.domain.accountbook.domain.entity.AccountBook;
 import server.tigglemate.domain.accountbook.domain.repository.AccountBookRepository;
 
@@ -153,19 +154,20 @@ public class AccountService {
     }
 
     // 현월 일별 소비 금액 합계 조회
-    public List<AccountDTO> getDailySumOfExpensesForThisMonth() {
+    public List<DailyExpensesDTO> getDailySumOfExpensesForThisMonth() {
         LocalDate today = LocalDate.now();
+
         int year = today.getYear();
         int month = today.getMonthValue();
 
         List<Object[]> results = accountRepository.sumExpensesByDayForMonth(year, month);
 
-        List<AccountDTO> dailyExpenses = new ArrayList<>();
+        List<DailyExpensesDTO> dailyExpenses = new ArrayList<>();
         for(Object[] objects : results) {
             LocalDate date = (LocalDate)objects[0];
             Long sum = (Long)objects[1];
-            AccountDTO dto = new AccountDTO();
-            dto.setCreateDate(date);
+            DailyExpensesDTO dto = new DailyExpensesDTO();
+            dto.setDate(date);
             dto.setAmount(sum.intValue());
             dailyExpenses.add(dto);
         }

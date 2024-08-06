@@ -12,6 +12,7 @@ import server.tigglemate.domain.account.application.AccountService;
 import server.tigglemate.domain.account.domian.entity.Account;
 import server.tigglemate.domain.account.dto.AccountDTO;
 import server.tigglemate.domain.account.dto.CategoryCountDTO;
+import server.tigglemate.domain.account.dto.DailyExpensesDTO;
 import server.tigglemate.global.template.ResponseTemplate;
 
 import java.util.List;
@@ -132,8 +133,8 @@ public class AccountApiController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @GetMapping("expense/sum/this-month/by-day")
-    public ResponseTemplate<List<AccountDTO>> getExpenseSumOfThisMonthByDay() {
-        List<AccountDTO> sum = accountService.getDailySumOfExpensesForThisMonth();
+    public ResponseTemplate<List<DailyExpensesDTO>> getExpenseSumOfThisMonthByDay() {
+        List<DailyExpensesDTO> sum = accountService.getDailySumOfExpensesForThisMonth();
 
         return new ResponseTemplate<>(HttpStatus.OK, "조회 성공", sum);
     }
