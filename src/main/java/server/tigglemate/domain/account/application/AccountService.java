@@ -193,6 +193,10 @@ public class AccountService {
             dto.setCount(count.intValue());
             categoryCounts.add(dto);
         }
+
+        categoryCounts.sort(Comparator.comparing(CategoryCountDTO::getCount)
+                .reversed());
+
         return categoryCounts;
     }
 }
