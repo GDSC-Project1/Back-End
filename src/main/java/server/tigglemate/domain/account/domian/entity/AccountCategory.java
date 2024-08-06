@@ -8,5 +8,7 @@ public enum AccountCategory {
     CAFE,       // 카페
     EDUCATION,  // 교육
     BEAUTY,     // 미용
-    ALLOWANCE   // 용돈
+    TRANSPORTATION, // 교통
+    ALLOWANCE  // 용돈
+
 }
