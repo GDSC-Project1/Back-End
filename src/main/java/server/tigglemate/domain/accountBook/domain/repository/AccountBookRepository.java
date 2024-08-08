@@ -10,6 +10,9 @@ public interface AccountBookRepository extends JpaRepository<AccountBook, Long> 
 
     Optional<AccountBook> findById(int userId);
 
-    @Query("SELECT a.targetAmount FROM AccountBook a")
-    Integer getTargetAmount();
+    @Query("SELECT a FROM AccountBook a WHERE a.id = :id")
+    AccountBook findAccountBookById(int id);
+
+    @Query("SELECT a.targetAmount FROM AccountBook a WHERE a.id =:id")
+    Integer getTargetAmount(int id);
 }

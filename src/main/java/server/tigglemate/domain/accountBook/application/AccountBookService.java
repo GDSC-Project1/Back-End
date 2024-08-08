@@ -46,7 +46,15 @@ public class AccountBookService {
     }
 
     // 가계부 조회
-    public List<AccountBook> getAccountBooks() {
-        return accountBookRepository.findAll();
+    public AccountBook getAccountBooks() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
+        return accountBookRepository.findAccountBookById(userId);
     }
 }

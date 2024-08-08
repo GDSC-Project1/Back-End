@@ -29,8 +29,8 @@ public class AccountBookApiController {
 
 
     @GetMapping("")
-    public ResponseTemplate<List<AccountBook>> getAll() {
-        List<AccountBook> accountBook = accountBookService.getAccountBooks();
+    public ResponseTemplate<AccountBook> getAll() {
+        AccountBook accountBook = accountBookService.getAccountBooks();
         return new ResponseTemplate<>(HttpStatus.OK, "조회 성공", accountBook);
     }
 }

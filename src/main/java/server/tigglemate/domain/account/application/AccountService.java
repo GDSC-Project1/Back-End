@@ -41,14 +41,10 @@ public class AccountService {
 
         int userId = user.getId();
 
-        AccountBook accountBook = accountBookRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Account book not found"));
+        AccountBook accountBook = accountBookRepository.findAccountBookById(userId);
 
         Account account = new Account();
         account.setType(accountDTO.getType());
-//        if (accountDTO.getType() != AccountType.INCOME) { // 수입 내역이면 카테고리 값과 만족도 값을 받지 않도록.
-//            account.setCategory(accountDTO.getCategory());
-//            account.setSatisfaction(accountDTO.getSatisfaction());
-//        }
         account.setCategory(accountDTO.getCategory());
         account.setDetails(accountDTO.getDetails());
         account.setAmount(accountDTO.getAmount());
@@ -186,7 +182,7 @@ public class AccountService {
         int userId = user.getId();
 
         Integer sumOfExpensesOfThisMonth = getSumOfExpensesOfThisMonth();
-        Integer targetAmount = accountBookRepository.getTargetAmount();
+        Integer targetAmount = accountBookRepository.getTargetAmount(userId);
 
         return targetAmount - sumOfExpensesOfThisMonth;
     }
