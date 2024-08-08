@@ -148,7 +148,7 @@ public class AccountService {
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        return accountRepository.sumExpensesByMonth(year, month);
+        return accountRepository.sumExpensesByMonth(year, month, userId);
     }
 
     // 전월 대비 현월 지출 금액 차이 조회
@@ -165,8 +165,8 @@ public class AccountService {
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        Integer lastMonth = accountRepository.sumExpensesByMonth(year, month - 1);
-        Integer thisMonth = accountRepository.sumExpensesByMonth(year, month);
+        Integer lastMonth = accountRepository.sumExpensesByMonth(year, month - 1, userId);
+        Integer thisMonth = accountRepository.sumExpensesByMonth(year, month, userId);
 
         if (lastMonth == null) {
             lastMonth = 0;
@@ -205,7 +205,7 @@ public class AccountService {
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        return accountRepository.getExpensesByCategory(year, month);
+        return accountRepository.getExpensesByCategory(year, month, userId);
     }
 
     // 현월 만족도별 지출 금액 합계 조회
@@ -222,17 +222,24 @@ public class AccountService {
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        return accountRepository.getExpensesBySatisfaction(year, month);
+        return accountRepository.getExpensesBySatisfaction(year, month, userId);
     }
 
     // 현월 일별 소비 금액 합계 조회
     public List<DailyExpensesDTO> getDailySumOfExpensesForThisMonth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
 
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        List<Object[]> results = accountRepository.sumExpensesByDayForMonth(year, month);
+        List<Object[]> results = accountRepository.sumExpensesByDayForMonth(year, month, userId);
 
         List<DailyExpensesDTO> dailyExpenses = new ArrayList<>();
         for(Object[] objects : results) {
@@ -249,12 +256,20 @@ public class AccountService {
 
     // 전월 카테고리별 항목수 개수가 많은 순으로 리스트 조회
     public List<CategoryCountDTO> getCategoryCountsByLastMonth() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
 
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        List<Object[]> results = accountRepository.countExpensesByCategoryForMonth(year, month - 1);
+        List<Object[]> results = accountRepository.countExpensesByCategoryForMonth(year, month - 1, userId);
 
         List<CategoryCountDTO> categoryCounts = new ArrayList<>();
         for(Object[] objects : results) {
@@ -271,4 +286,5 @@ public class AccountService {
 
         return categoryCounts;
     }
+
 }
