@@ -10,12 +10,12 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     // 금일 지출 내역 리스트 조회
-    @Query("SELECT a FROM Account a WHERE DATE(a.createDate) = :date AND a.type = 'EXPENSE'")
-    List<Account> findAllByCreateDate(LocalDate date);
+    @Query("SELECT a FROM Account a WHERE DATE(a.createDate) = :date AND a.type = 'EXPENSE' AND a.accountBook.id = :id")
+    List<Account> findAllByCreateDate(LocalDate date, int id);
 
     // 금일 지출 금액 합계 조회
-    @Query("SELECT SUM(a.amount) FROM Account a WHERE a.createDate= :date")
-    Integer sumTodayExpenses(LocalDate date);
+    @Query("SELECT SUM(a.amount) FROM Account a WHERE a.createDate= :date AND a.accountBook.id = :id ")
+    Integer sumTodayExpenses(LocalDate date, int id);
 
     // 월별 지출 합계 조회
     @Query("SELECT SUM(a.amount) FROM Account a WHERE FUNCTION('YEAR', a.createDate) = :year AND FUNCTION('MONTH', a.createDate) = :month AND a.type = 'EXPENSE'")

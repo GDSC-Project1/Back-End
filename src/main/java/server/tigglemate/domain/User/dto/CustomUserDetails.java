@@ -46,6 +46,10 @@ public class CustomUserDetails implements UserDetails {
         return userEntity.getUsername();
     }
 
+    public int getUserId() {
+        return userEntity.getId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
 

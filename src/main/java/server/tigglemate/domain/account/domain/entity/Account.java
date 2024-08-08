@@ -40,7 +40,7 @@ public class Account {
     private LocalTime createTime;
 
     @ManyToOne
-    @JoinColumn(name ="accountbook_id")
+    @JoinColumn(name ="accountbook")
     @JsonBackReference
     private AccountBook accountBook;
 }

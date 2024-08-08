@@ -1,7 +1,11 @@
 package server.tigglemate.domain.account.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import server.tigglemate.domain.User.domain.entity.UserEntity;
+import server.tigglemate.domain.User.domain.repository.UserRepository;
 import server.tigglemate.domain.account.domain.entity.Account;
 import server.tigglemate.domain.account.domain.entity.AccountCategory;
 import server.tigglemate.domain.account.domain.repository.AccountRepository;
@@ -13,10 +17,7 @@ import server.tigglemate.domain.accountBook.domain.repository.AccountBookReposit
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class AccountService {
@@ -27,11 +28,20 @@ public class AccountService {
     @Autowired
     private AccountBookRepository accountBookRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // 가계부 내역 입력
     public Account create(AccountDTO accountDTO) {
 
-        // 가계부는 유저당 1개만 생성 가능
-        AccountBook accountBook = accountBookRepository.findById(1L).orElseThrow(() -> new NoSuchElementException("Account book not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
+        AccountBook accountBook = accountBookRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Account book not found"));
 
         Account account = new Account();
         account.setType(accountDTO.getType());
@@ -72,8 +82,16 @@ public class AccountService {
 
     // 가계부 내역 전체 조회
     public List<Account> getAccountLists() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        List<Account> expenses = accountRepository.findAll();
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
+        AccountBook accountBook = accountBookRepository.findById(userId).orElse(null);
+
+        List<Account> expenses = Objects.requireNonNull(accountBook).getAccounts();
 
         expenses.sort(Comparator.comparing(Account::getCreateDate)
                 .thenComparing(Account::getCreateTime)
@@ -84,8 +102,16 @@ public class AccountService {
 
     // 금일 소비 내역 리스트 조회
     public List<Account> getTodayExpenses() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
-        List<Account> expenses = accountRepository.findAllByCreateDate(today);
+        List<Account> expenses = accountRepository.findAllByCreateDate(today, userId);
 
         expenses.sort(Comparator.comparing(Account::getCreateTime)
                 .reversed());
@@ -95,13 +121,29 @@ public class AccountService {
 
     // 금일 지출 합계 조회
     public Integer getSumOfExpensesOfToday() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
 
-        return accountRepository.sumTodayExpenses(today);
+        return accountRepository.sumTodayExpenses(today, userId);
     }
 
     // 현월 지출 합계 조회
     public Integer getSumOfExpensesOfThisMonth() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
         int year = today.getYear();
         int month = today.getMonthValue();
@@ -111,6 +153,14 @@ public class AccountService {
 
     // 전월 대비 현월 지출 금액 차이 조회
     public Integer getGapBetweenThisMonthAndLastMonth() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
         int year = today.getYear();
         int month = today.getMonthValue();
@@ -127,6 +177,14 @@ public class AccountService {
 
     // 목표 금액 대비 현월 소비 금액 차이 조회
     public Integer getGapBetweenExpensesOfThisMonthAndTargetAmount() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         Integer sumOfExpensesOfThisMonth = getSumOfExpensesOfThisMonth();
         Integer targetAmount = accountBookRepository.getTargetAmount();
 
@@ -135,6 +193,14 @@ public class AccountService {
 
     // 현월 카테고리별 지출 금액 합계 조회
     public List<Object[]> getSumOfExpensesByCategory() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
         int year = today.getYear();
         int month = today.getMonthValue();
@@ -144,6 +210,14 @@ public class AccountService {
 
     // 현월 만족도별 지출 금액 합계 조회
     public List<Object[]> getSumOfExpensesBySatisfaction() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity user = userRepository.findByUsername(username);
+
+        int userId = user.getId();
+
         LocalDate today = LocalDate.now();
         int year = today.getYear();
         int month = today.getMonthValue();

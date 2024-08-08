@@ -29,6 +29,7 @@ public class AccountBookService {
 
         String username = authentication.getName();
 
+
         UserEntity user = userRepository.findByUsername(username);
 
         if (user == null) {
