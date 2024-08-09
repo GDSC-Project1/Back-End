@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import server.tigglemate.domain.User.application.CustomUserDetailsService;
 import server.tigglemate.domain.User.domain.entity.UserEntity;
 import server.tigglemate.domain.User.domain.repository.UserRepository;
 import server.tigglemate.domain.account.domain.entity.Account;
@@ -31,15 +32,13 @@ public class AccountService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
     // 가계부 내역 입력
     public Account create(AccountDTO accountDTO) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         AccountBook accountBook = accountBookRepository.findAccountBookById(userId);
 
@@ -78,12 +77,8 @@ public class AccountService {
 
     // 가계부 내역 전체 조회
     public List<Account> getAccountLists() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
 
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         AccountBook accountBook = accountBookRepository.findById(userId).orElse(null);
 
@@ -99,12 +94,7 @@ public class AccountService {
     // 금일 소비 내역 리스트 조회
     public List<Account> getTodayExpenses() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
         List<Account> expenses = accountRepository.findAllByCreateDate(today, userId);
@@ -118,12 +108,7 @@ public class AccountService {
     // 금일 지출 합계 조회
     public Integer getSumOfExpensesOfToday() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
 
@@ -133,12 +118,7 @@ public class AccountService {
     // 현월 지출 합계 조회
     public Integer getSumOfExpensesOfThisMonth() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
         int year = today.getYear();
@@ -150,12 +130,7 @@ public class AccountService {
     // 전월 대비 현월 지출 금액 차이 조회
     public Integer getGapBetweenThisMonthAndLastMonth() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
         int year = today.getYear();
@@ -174,12 +149,7 @@ public class AccountService {
     // 목표 금액 대비 현월 소비 금액 차이 조회
     public Integer getGapBetweenExpensesOfThisMonthAndTargetAmount() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         Integer sumOfExpensesOfThisMonth = getSumOfExpensesOfThisMonth();
         Integer targetAmount = accountBookRepository.getTargetAmount(userId);
@@ -190,12 +160,7 @@ public class AccountService {
     // 현월 카테고리별 지출 금액 합계 조회
     public List<Object[]> getSumOfExpensesByCategory() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
         int year = today.getYear();
@@ -207,12 +172,7 @@ public class AccountService {
     // 현월 만족도별 지출 금액 합계 조회
     public List<Object[]> getSumOfExpensesBySatisfaction() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
         int year = today.getYear();
@@ -223,12 +183,8 @@ public class AccountService {
 
     // 현월 일별 소비 금액 합계 조회
     public List<DailyExpensesDTO> getDailySumOfExpensesForThisMonth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
 
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
 
@@ -253,12 +209,7 @@ public class AccountService {
     // 전월 카테고리별 항목수 개수가 많은 순으로 리스트 조회
     public List<CategoryCountDTO> getCategoryCountsByLastMonth() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         LocalDate today = LocalDate.now();
 
@@ -282,5 +233,6 @@ public class AccountService {
 
         return categoryCounts;
     }
+
 
 }

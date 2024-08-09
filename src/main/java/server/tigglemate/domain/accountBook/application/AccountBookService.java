@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import server.tigglemate.domain.User.application.CustomUserDetailsService;
 import server.tigglemate.domain.User.domain.entity.UserEntity;
 import server.tigglemate.domain.User.domain.repository.UserRepository;
 import server.tigglemate.domain.User.dto.CustomUserDetails;
@@ -21,6 +22,9 @@ public class AccountBookService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     // 가계부 생성 - 목표 금액 설정
     public AccountBook create(AccountBookDTO accountBookDTO) {
@@ -48,13 +52,9 @@ public class AccountBookService {
     // 가계부 조회
     public AccountBook getAccountBooks() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity user = userRepository.findByUsername(username);
-
-        int userId = user.getId();
+        Long userId = customUserDetailsService.getUserId();
 
         return accountBookRepository.findAccountBookById(userId);
     }
+
 }
