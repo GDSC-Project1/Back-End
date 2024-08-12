@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface AccountBookRepository extends JpaRepository<AccountBook, Long> {
 
-    Optional<AccountBook> findById(int userId);
-
     @Query("SELECT a FROM AccountBook a WHERE a.id = :id")
     AccountBook findAccountBookById(Long id);
 

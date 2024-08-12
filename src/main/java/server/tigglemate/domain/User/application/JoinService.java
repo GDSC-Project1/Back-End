@@ -29,7 +29,7 @@ public class JoinService {
         Boolean isExist = userRepository.existsByUsername(username);
 
         if (isExist) {
-            return;
+            throw new IllegalArgumentException("이미 존재하는 회원 입니다.");
         }
 
         // 패스워드와 확인 패스워드가 일치하는지 확인
